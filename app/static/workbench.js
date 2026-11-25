@@ -8,6 +8,8 @@ const profile = document.querySelector('#profile');
 const status = document.querySelector('#notice');
 const detail = document.querySelector('#review');
 const evidence = document.querySelector('#evidence');
+const confirmForm = document.querySelector('#confirm');
+const confirmList = document.querySelector('#confirm-list');
 const stages = [...document.querySelectorAll('[data-stage]')];
 let stage = 'balance';
 let report, selected, batch, running = false;
@@ -31,12 +33,38 @@ function draw() {
   for (const button of stages) button.setAttribute('aria-pressed',String(button.dataset.stage===stage));
   document.querySelector('#panel-title').textContent = stages.find(button => button.dataset.stage===stage)?.textContent || '运行对账';
   detail.hidden = !batch;
+  confirmForm.hidden = !batch;
   if (batch) {
     document.querySelector('#run-status').textContent = `${batch.id.slice(0,10)} · ${batch.status} · r${batch.revision}`;
     detail.querySelector('[value="APPROVED"]').disabled = !report.balance.releasable || batch.status==='APPROVED';
     detail.querySelector('[value="HELD"]').disabled = batch.status==='APPROVED';
     evidence.href = `/api/runs/${batch.id}/evidence`;
+    renderConfirmations().catch(error => announce(error.message, true));
   }
+}
+
+async function renderConfirmations() {
+  confirmList.replaceChildren();
+  const items = (await request(`/api/runs/${batch.id}/confirmations`)).items;
+  if (!batch) return;
+  document.querySelector('#confirm-run').textContent = `r${batch.revision} · ${items.length} 个确认点`;
+  for (const item of items) {
+    const li = document.createElement('li');
+    li.append(`${item.case} · 站 ${item.station} · 秒 ${item.second}`);
+    const button = document.createElement('button');
+    button.type = 'button'; button.textContent = '撤回';
+    button.disabled = batch.status === 'APPROVED';
+    button.addEventListener('click', () => perform(async () => {
+      const result = await request(`/api/runs/${batch.id}/confirmations/${item.id}`, {
+        method: 'DELETE', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({revision: batch.revision}),
+      });
+      show(result, true); announce('确认点已撤回，已重新核算'); await refresh();
+    }));
+    li.append(button);
+    confirmList.append(li);
+  }
+  if (!items.length) confirmList.append(document.createElement('li')).textContent = '尚无确认点';
 }
 
 function show(payload, committed = false) {
@@ -101,6 +129,22 @@ detail.addEventListener('submit',event=>{
     const payload={status:event.submitter.value,revision:batch.revision,note:detail.elements.note.value};
     const result=await request(`/api/runs/${batch.id}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     show(result,true); announce(result.status==='APPROVED'?'批次已签发':'批次已暂缓'); await refresh();
+  });
+});
+confirmForm.addEventListener('submit', event => {
+  event.preventDefault();
+  perform(async () => {
+    const payload = {
+      revision: batch.revision,
+      case: confirmForm.elements.case.value.trim(),
+      station: Number(confirmForm.elements.station.value),
+      second: Number(confirmForm.elements.second.value),
+    };
+    const result = await request(`/api/runs/${batch.id}/confirmations`, {
+      method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload),
+    });
+    confirmForm.reset();
+    show(result, true); announce('确认点已补传，已重新核算'); await refresh();
   });
 });
 preview(stage);

@@ -34,6 +34,15 @@
 {% endmacro %}
 {% macro archive() %}
 <aside class="panel archive" id="review-area"><h2>批次复核</h2><ul id="history"></ul>
+  <form id="confirm" hidden>
+    <h3>人工确认到站</h3>
+    <p id="confirm-run"></p>
+    <label>业务组 <input id="confirm-case" name="case" required maxlength="35" placeholder="如 0001"></label>
+    <label>站点 <input id="confirm-station" name="station" required inputmode="numeric" placeholder="站点编号"></label>
+    <label>到站时点（秒） <input id="confirm-second" name="second" type="number" min="0" required></label>
+    <button type="submit" class="action">补传确认点</button>
+    <ul id="confirm-list"></ul>
+  </form>
   <form id="review" hidden>
     <p id="run-status"></p><label for="note">复核意见</label>
     <textarea id="note" name="note" minlength="3" maxlength="200" required></textarea>

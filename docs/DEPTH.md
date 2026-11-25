@@ -12,6 +12,7 @@
 | M4 漏站复核 | 查看签收判定 | `POST /api/stages/policy` | `app/modules/policy.py` | `tests/test_policy.py` |
 | M5 运行对账 | 对照输入、采信和隔离行 | `POST /api/stages/balance` | `app/modules/reconcile.py` | `tests/test_reconcile.py` |
 | M6 批次复核 | 执行批次并签发或暂缓 | `POST /api/runs、PATCH /api/runs/<id>` | `app/review/service.py` | `tests/test_review.py` |
+| M8 人工确认 | 补传/撤回确认到站并重算 | `GET/POST /api/runs/<id>/confirmations、DELETE /api/runs/<id>/confirmations/<cid>` | `app/review/service.py`、`app/modules/calculate.py`、`app/modules/prepare.py` | `tests/test_confirmations.py`、`tests/test_anchor_calculate.py` |
 | M7 证据交付 | 下载复核清单 | `GET /api/runs/<id>/evidence` | `app/evidence/render.py` | `tests/test_evidence.py` |
 
 ## 输入陷阱
@@ -33,5 +34,7 @@
 ## 领域反例
 
 候选点需属于班次站序、置信度 1–100，时点不能超过班次截止。路径时间与站序都严格递增，优先覆盖已登记站点，再比较置信度总分，最后按记录键稳定选取。允许缺站，但覆盖低于调度清单要求需复核。
+
+人工确认到站是路径必须命中的锚点。补传确认点后，在所有能按时间与站序覆盖全部锚点的路径里重算最优解（锚点与同站同时的定位点合并，不重复成站；锚点本身计入有效站次），自动定位凑出的长路径若漏掉确认点会被替代。确认点之间出现时间与站序矛盾、同站重复或同时点时，该业务组判 `CONFIRMATION_CONFLICT`，即使自动定位已达标也暂缓。撤回确认点后按剩余锚点重新核算。补传、撤回与签发共用同一乐观版本号，任一写操作生效即推进版本，旧版本号的并发写返回 409；撤回生效后旧复核单不能签发。
 
 `sample_data/incoming.csv` 的 0003 组触发预检异常，0004 组触发业务判定。`tests/test_calculate.py` 还核对逐组结论和证据字段。

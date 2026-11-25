@@ -54,6 +54,11 @@ body.stops {margin:0;background:var(--bg);color:var(--ink);font:13px/1.5 var(--f
 .stops #history {list-style:none;padding:0;display:flex;flex-wrap:wrap;gap:var(--gap);margin:0}
 .stops #history li {display:flex;align-items:center;flex-wrap:wrap}
 .stops #review {margin-top:14px;max-width:580px}
+.stops #confirm {margin-top:14px;max-width:580px}
+.stops #confirm label {display:grid;gap:3px;margin-bottom:8px;font-weight:600;color:var(--muted)}
+.stops #confirm input {font:inherit;color:inherit;border:1px solid var(--line);padding:.42em .68em;background:var(--soft);border-radius:var(--radius);cursor:text}
+.stops #confirm-list {list-style:none;padding:0;margin:10px 0 0;display:grid;gap:6px}
+.stops #confirm-list li {display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .stops textarea {display:block;width:100%;min-height:54px;cursor:text}
 .stops .review-actions {display:flex;gap:6px;margin:8px 0}
 .stops .statusbar {display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;border-top:1px solid var(--line);padding:10px var(--pad);color:var(--muted)}

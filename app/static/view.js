@@ -8,6 +8,7 @@ const labels = {READY:'通过', MISMATCH:'数值不符', PENDING:'待复核', AP
   HORIZON_UNOBSERVED:'超出观察范围', CELL_CONFLICT:'单元格重复', MARGINAL_INFERENCE:'可经边际反推',
   FIELD_REGISTRY_CONFLICT:'字段登记冲突', BREAKING_SCHEMA:'存在不兼容变更', SLOT_COLLISION:'号源登记冲突',
   STALE_CANCELLATION:'取消记录失效', STOP_ORDER_CONFLICT:'站序冲突', MISSING_STOPS:'到站序列缺站',
+  CONFIRMATION_CONFLICT:'确认点冲突暂缓',
   SAMPLE_PAIR_MISSING:'平行样不完整', METHOD_MISMATCH:'检测方法不一致', QUALITY_LIMIT:'质控限值超出',
   UNKNOWN_AUTHOR:'未知作者', ENTITY_COUNT_MISMATCH:'归并组数不符', DUPLICATE_DAY:'日期重复',
   INVALID_SCENARIO:'补货参数无效', SERVICE_TARGET_MISSED:'服务目标未达', INVALID_SAMPLING_PLAN:'抽样计划无效',
@@ -52,6 +53,7 @@ const fieldLabels = {matched:'匹配关系', unmet:'未覆盖', loads:'磅单明
   origins_g:'来源克数', overdrawn:'超投批次', unbalanced:'投料不平衡', segments:'客群金额', gaps:'缺失关联',
   stockout_min:'缺货分钟', selling_min:'可售分钟', confidence:'置信度', peak_start_min:'峰窗起点',
   windows:'窗口需量', debit:'借方', credit:'贷方', resident:'本币金额', price:'汇率', matched_cents:'匹配分',
+  confirmations:'人工确认点', second:'时点',
   matched_g:'匹配克数', pending:'待匹配', remaining:'剩余余额', live:'可见顺序', tombstones:'墓碑序列',
   accounted:'已记账行', balanced:'总数平衡', input:'输入行', accepted:'采信行', isolated:'隔离行', mode:'判定方式', pass:'结论', value:'测量值', age:'龄期', picked:'领取数', censored:'删失数', risk:'在险数', remaining_bp:'剩余基点', external:'外校课程', local:'校内课程', field:'字段', ticket:'磅单', net:'净重', revenue:'收入', segment:'客群', channel:'渠道', chosen_touch:'命中触点', elapsed_min:'经过分钟', old_cents:'旧金额', new_cents:'新金额', expansion_cents:'扩张金额', contraction_cents:'收缩金额', churn_cents:'流失金额', due_cents:'应付金额', paid_cents:'已付金额', gap_cents:'差额', warnings:'提示', records:'记录数'};
 
